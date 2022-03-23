@@ -1,7 +1,7 @@
 # Resources / var/ data/module/local
 
 data "digitalocean_ssh_key" "SSH_KEY" {
-  name = "mbp-13-2"
+  name = "mbp"
 }
 
 resource "docker_image" "dov-bear" {
@@ -19,10 +19,6 @@ resource "docker_container" "dov-bear-container" {
     # external = 8080
     external = 8080 + count.index
   }
-}
-
-output "mbp_ssh_key" {
-  value = data.digitalocean_ssh_key.SSH_KEY.fingerprint
 }
 
 output "container_name" {

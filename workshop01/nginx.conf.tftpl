@@ -16,8 +16,8 @@ http {
 
 	upstream dov-bear {
 		least_conn;
-		%{~ for ip_port in containers ~}
-		server ${ip_port};
+		%{~ for port in container_ports ~}
+		server ${docker_host_ip}:${port};
 		%{~ endfor ~}
 	}
 

@@ -1,0 +1,20 @@
+- name: Connectivity Test
+  hosts: all
+  vars:
+    my_list:
+      - one
+      - two
+      - three
+  tasks:
+    - name: Ping the server
+      ping:
+    - name: Echo variables
+      debug:
+        msg: ansible_user {{ansible_user}}
+    - name: ip address
+      debug:
+        msg: IP address is {{ansible_host}}
+    - name: list all lines
+      debug:
+        msg: "Lines: {{item}}"
+      loop: "{{my_list}}"

@@ -15,3 +15,12 @@ variable "INSTANCE_NAME" {
   default     = "dov"
   description = "Name of application running inside container"
 }
+
+variable "docker_host_ip" {
+  type = string
+}
+
+variable "private_key" {
+  type      = string
+  sensitive = true
+}

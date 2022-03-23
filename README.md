@@ -1,4 +1,6 @@
-# AIPC-Course March 2022
+# AIPC-Course March 2022  
+
+Place private key in workshop01/
 
 ## Course notes:
 providers.tf -> providers  
