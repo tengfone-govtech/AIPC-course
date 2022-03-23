@@ -35,8 +35,6 @@ resource "digitalocean_droplet" "ansible" {
   }
 }
 
-output "provisioned_ip_address" {
+output "ansible_ip_address" {
   value = digitalocean_droplet.ansible.ipv4_address
 }
-
-# ansible all -i inventory.yaml -m ping

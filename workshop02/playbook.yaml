@@ -1,20 +1,62 @@
-- name: Connectivity Test
+- name: Install Code Server
   hosts: all
   vars:
-    my_list:
-      - one
-      - two
-      - three
+    b:
+      - a
   tasks:
-    - name: Ping the server
-      ping:
-    - name: Echo variables
-      debug:
-        msg: ansible_user {{ansible_user}}
-    - name: ip address
-      debug:
-        msg: IP address is {{ansible_host}}
-    - name: list all lines
-      debug:
-        msg: "Lines: {{item}}"
-      loop: "{{my_list}}"
+    - name: Create code-server directory
+      file:
+        path: ~/code-server
+        state: directory
+    - name: Download Repo
+      get_url:
+        url: https://github.com/coder/code-server/releases/download/v4.2.0/code-server-4.2.0-linux-amd64.tar.gz
+        dest: ~/
+      register: cs_repo_files
+    - name: Extract code-server
+      unarchive:
+        src: ~/code-server-4.2.0-linux-amd64.tar.gz
+        dest: ~/
+        copy: no
+    - name: Copy to able to access it system wide
+      shell: "sudo cp -r ~/code-server-4.2.0-linux-amd64 /usr/lib/code-server"
+    - name: Create a symbolic link (CodeServer)
+      file:
+        src: /usr/lib/code-server/bin/code-server
+        dest: /usr/bin/code-server
+        state: link
+    - name: Directory to store codeserver user data
+      file:
+        path: /var/lib/code-server
+        state: directory
+    - name: Copy code server conf file over
+      copy:
+        src: ./code-server.service
+        dest: /lib/systemd/system/code-server.service
+    - name: Make sure code server is running and on start up
+      systemd:
+        state: started
+        enabled: yes
+        name: code-server
+    - name: "install nginx"
+      apt:
+        name: ["nginx"]
+        state: latest
+    - name: Make sure NginX is running and on start up
+      systemd:
+        state: started
+        enabled: yes
+        name: nginx
+    - name: Copy code server service file over
+      copy:
+        src: ./code-server.conf
+        dest: /etc/nginx/sites-available/code-server.conf
+    - name: Create a symbolic link (NginX)
+      file:
+        src: /etc/nginx/sites-available/code-server.conf
+        dest: /etc/nginx/sites-enabled/code-server.conf
+        state: link
+    - name: Reload service nginx, in all cases
+      systemd:
+        name: nginx
+        state: reloaded

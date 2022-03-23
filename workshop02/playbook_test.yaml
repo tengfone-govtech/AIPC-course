@@ -1,0 +1,37 @@
+- name: Connectivity Test
+  hosts: all
+  vars:
+    my_list:
+      - one
+      - two
+      - three
+  tasks:
+    - name: Ping the server
+      ping:
+    - name: Echo variables
+      debug:
+        msg: ansible_user {{ansible_user}}
+    - name: ip address
+      debug:
+        msg: IP address is {{ansible_host}}
+    - name: list all lines
+      debug:
+        msg: "Lines: {{item}}"
+      loop: "{{my_list}}"
+
+    - name: List files in /etc
+      find:
+        paths: /etc
+        file_type: file
+      register: etc_files
+    - name: etc_files return value
+      debug:
+        msg: "{{ item.path }}"
+      loop: "{{ etc_files.files }}"
+    - name: if file exists
+      stat:
+        path: /etc/host
+      register: etc_host
+    - name: list etc_host
+      debug:
+        msg: "Exists? {{etc_host.stat}}"
