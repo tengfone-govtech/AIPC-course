@@ -1,0 +1,33 @@
+- name: Boot Code Server
+  hosts: all
+  vars:
+    b:
+      - a
+  tasks:
+    - name: Generate code-server.service file
+      template:
+        src: code-server.service.j2
+        dest: /lib/systemd/system/code-server.service
+    - name: Make sure code server is running and on start up
+      systemd:
+        state: started
+        enabled: yes
+        name: code-server
+    - name: Make sure NginX is running and on start up
+      systemd:
+        state: started
+        enabled: yes
+        name: nginx
+    - name: Generate code-server nginx configuration
+      template:
+        src: code-server.conf.j2
+        dest: /etc/nginx/sites-available/code-server.conf
+    - name: Create a symbolic link (NginX)
+      file:
+        src: /etc/nginx/sites-available/code-server.conf
+        dest: /etc/nginx/sites-enabled/code-server.conf
+        state: link
+    - name: Reload service nginx, in all cases
+      systemd:
+        name: nginx
+        state: reloaded

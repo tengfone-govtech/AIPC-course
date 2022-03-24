@@ -33,3 +33,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 infracourse
+variables.pkrvars.hcl
+s3_backend.hcl
